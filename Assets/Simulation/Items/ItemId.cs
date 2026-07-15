@@ -4,7 +4,8 @@ namespace Aerow.Sim
 {
     /// <summary>
     /// Lightweight handle to an <see cref="ItemDef"/> in an <see cref="ItemCatalogue"/>.
-    /// Stored on belts, in inventory slots, in recipes — cheap to copy and cache-friendly.
+    /// Stored in inventory slots (and later on belts, in machine buffers, etc.) —
+    /// cheap to copy and cache-friendly.
     /// The integer index is a runtime value; for saves and content references use the
     /// def's stable <see cref="ItemDef.StringId"/> instead.
     /// </summary>

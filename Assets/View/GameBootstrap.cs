@@ -1,0 +1,74 @@
+using UnityEngine;
+
+namespace Aerow.View
+{
+    /// <summary>
+    /// Runtime entry point: loads game content once at startup and exposes it to the rest of
+    /// the game. Put one on a GameObject in your startup scene and assign the ContentDatabase
+    /// asset in the Inspector. This only loads and holds data — it runs no simulation and no
+    /// update loop.
+    /// </summary>
+    [DefaultExecutionOrder(-1000)] // build content before other scripts' Awake run
+    public sealed class GameBootstrap : MonoBehaviour
+    {
+        private static GameBootstrap _instance;
+
+        [SerializeField]
+        [Tooltip("The master ContentDatabase asset listing every item SO.")]
+        private ContentDatabase contentDatabase;
+
+        /// <summary>
+        /// The loaded content: the sim's item catalogue plus the view-side visual lookup.
+        /// Null until <see cref="Awake"/> succeeds — read it from Start onward, or guard with
+        /// <see cref="IsReady"/>.
+        /// </summary>
+        public static GameContent Content { get; private set; }
+
+        /// <summary>True once content is loaded and safe to read.</summary>
+        public static bool IsReady => Content != null;
+
+        private void Awake()
+        {
+            if (_instance != null && _instance != this)
+            {
+                // A bootstrap already exists (e.g. an additively loaded scene). Keep the first.
+                Destroy(gameObject);
+                return;
+            }
+            _instance = this;
+
+            if (contentDatabase == null)
+            {
+                Debug.LogError("[GameBootstrap] No ContentDatabase assigned — drag the asset " +
+                               "into the Content Database field in the Inspector.", this);
+                enabled = false;
+                return;
+            }
+
+            try
+            {
+                Content = contentDatabase.Build();
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogError($"[GameBootstrap] Content build failed: {e.Message}", this);
+                enabled = false;
+                return;
+            }
+
+            Debug.Log($"[GameBootstrap] Content loaded — {Content.Items.Count} item(s).", this);
+            DontDestroyOnLoad(gameObject);
+        }
+
+        private void OnDestroy()
+        {
+            // Clear statics when the owning bootstrap is torn down, so the next play session
+            // (with domain reload disabled) starts from a clean slate.
+            if (_instance == this)
+            {
+                _instance = null;
+                Content = null;
+            }
+        }
+    }
+}

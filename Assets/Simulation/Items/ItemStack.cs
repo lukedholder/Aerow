@@ -2,8 +2,7 @@ namespace Aerow.Sim
 {
     /// <summary>
     /// A quantity of one item type. Mutable value type — used directly inside inventory
-    /// slot arrays for cache-friendly, allocation-free storage. When passed around as a
-    /// recipe input/output it is treated as read-only data.
+    /// slot arrays for cache-friendly, allocation-free storage.
     /// </summary>
     public struct ItemStack
     {

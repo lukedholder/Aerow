@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6fd5735f005dd1347b6ec9dbdffbc651, type: 3}
   m_Name: iron_bar
   m_EditorClassIdentifier: View::Aerow.View.ItemDefSO
-  stringId: 
-  displayName: 
-  category: 0
+  stringId: iron_bar
+  displayName: Iron Bar
+  category: 1
   maxStack: 100
   description: 
   icon: {fileID: 0}

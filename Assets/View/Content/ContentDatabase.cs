@@ -6,9 +6,9 @@ using Aerow.Sim;
 namespace Aerow.View
 {
     /// <summary>
-    /// The master content list and single source of truth. Lists every item and recipe SO
-    /// in the game; <see cref="Build"/> turns them into the sim's catalogues plus the
-    /// view-side visual lookup. Create one asset via
+    /// The master content list and single source of truth. Lists every item SO in the game;
+    /// <see cref="Build"/> turns them into the sim's item catalogue plus the view-side
+    /// visual lookup. Create one asset via
     /// <c>Assets ▸ Create ▸ Aerow ▸ Content Database</c>, then either drag SOs into the lists
     /// or use the context menu <b>Collect All Content From Project</b>.
     /// </summary>
@@ -19,10 +19,10 @@ namespace Aerow.View
         public List<ItemDefSO> items = new List<ItemDefSO>();
 
         /// <summary>
-        /// Register all listed SOs into fresh sim catalogues and build the visual lookup.
+        /// Register all listed SOs into a fresh sim catalogue and build the visual lookup.
         /// Registration is sorted by StringId so runtime ids are deterministic regardless of
-        /// list order or how the assets were gathered. Items register before recipes so
-        /// ingredient references resolve. Throws with a clear message on the first bad asset.
+        /// list order or how the assets were gathered. Throws with a clear message on the
+        /// first bad asset.
         /// </summary>
         public GameContent Build()
         {
@@ -66,7 +66,7 @@ namespace Aerow.View
             try
             {
                 GameContent content = Build();
-                Debug.Log($"[ContentDatabase] Build OK — {content.Items.Count} item(s), ");
+                Debug.Log($"[ContentDatabase] Build OK — {content.Items.Count} item(s).");
             }
             catch (Exception e)
             {

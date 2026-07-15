@@ -13,7 +13,7 @@ namespace Aerow.View
     public sealed class ItemDefSO : ScriptableObject
     {
         [Header("Identity — shared with the simulation")]
-        [Tooltip("Stable unique key used by the sim, saves, and recipe references. " +
+        [Tooltip("Stable unique key used by the sim and saves. " +
                  "e.g. \"iron_plate\". Lowercase, no spaces. Changing it after saves exist breaks those saves.")]
         public string stringId;
 
