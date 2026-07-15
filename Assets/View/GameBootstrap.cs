@@ -1,12 +1,13 @@
 using UnityEngine;
+using Aerow.View.Input;
 
 namespace Aerow.View
 {
     /// <summary>
-    /// Runtime entry point: loads game content once at startup and exposes it to the rest of
-    /// the game. Put one on a GameObject in your startup scene and assign the ContentDatabase
-    /// asset in the Inspector. This only loads and holds data — it runs no simulation and no
-    /// update loop.
+    /// Runtime entry point: loads game content and brings the input layer online at startup,
+    /// and exposes content to the rest of the game. Put one on a GameObject in your startup
+    /// scene and assign the ContentDatabase asset in the Inspector. It runs no simulation and
+    /// no update loop.
     /// </summary>
     [DefaultExecutionOrder(-1000)] // build content before other scripts' Awake run
     public sealed class GameBootstrap : MonoBehaviour
@@ -37,6 +38,10 @@ namespace Aerow.View
             }
             _instance = this;
 
+            // Bring the input layer online. Independent of content, so it runs even if the
+            // content build below fails — you still want the game controllable.
+            GameInput.Initialize();
+
             if (contentDatabase == null)
             {
                 Debug.LogError("[GameBootstrap] No ContentDatabase assigned — drag the asset " +
@@ -66,6 +71,7 @@ namespace Aerow.View
             // (with domain reload disabled) starts from a clean slate.
             if (_instance == this)
             {
+                GameInput.Shutdown();
                 _instance = null;
                 Content = null;
             }
