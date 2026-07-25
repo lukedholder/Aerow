@@ -220,6 +220,15 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""OpenBuildMenu"",
+                    ""type"": ""Button"",
+                    ""id"": ""2f0d142f-fbc0-4538-9048-57cc23ecd062"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -363,6 +372,17 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": "";Keyboard&Mouse"",
                     ""action"": ""EnterBuild"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""b1ac9b68-cef0-4c4a-bf91-464a2550c47d"",
+                    ""path"": ""<Keyboard>/q"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""OpenBuildMenu"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -639,6 +659,7 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         m_OnFoot_Secondary = m_OnFoot.FindAction("Secondary", throwIfNotFound: true);
         m_OnFoot_ToggleInventory = m_OnFoot.FindAction("ToggleInventory", throwIfNotFound: true);
         m_OnFoot_EnterBuild = m_OnFoot.FindAction("EnterBuild", throwIfNotFound: true);
+        m_OnFoot_OpenBuildMenu = m_OnFoot.FindAction("OpenBuildMenu", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -846,6 +867,7 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
     private readonly InputAction m_OnFoot_Secondary;
     private readonly InputAction m_OnFoot_ToggleInventory;
     private readonly InputAction m_OnFoot_EnterBuild;
+    private readonly InputAction m_OnFoot_OpenBuildMenu;
     /// <summary>
     /// Provides access to input actions defined in input action map "OnFoot".
     /// </summary>
@@ -893,6 +915,10 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "OnFoot/EnterBuild".
         /// </summary>
         public InputAction @EnterBuild => m_Wrapper.m_OnFoot_EnterBuild;
+        /// <summary>
+        /// Provides access to the underlying input action "OnFoot/OpenBuildMenu".
+        /// </summary>
+        public InputAction @OpenBuildMenu => m_Wrapper.m_OnFoot_OpenBuildMenu;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -946,6 +972,9 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
             @EnterBuild.started += instance.OnEnterBuild;
             @EnterBuild.performed += instance.OnEnterBuild;
             @EnterBuild.canceled += instance.OnEnterBuild;
+            @OpenBuildMenu.started += instance.OnOpenBuildMenu;
+            @OpenBuildMenu.performed += instance.OnOpenBuildMenu;
+            @OpenBuildMenu.canceled += instance.OnOpenBuildMenu;
         }
 
         /// <summary>
@@ -984,6 +1013,9 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
             @EnterBuild.started -= instance.OnEnterBuild;
             @EnterBuild.performed -= instance.OnEnterBuild;
             @EnterBuild.canceled -= instance.OnEnterBuild;
+            @OpenBuildMenu.started -= instance.OnOpenBuildMenu;
+            @OpenBuildMenu.performed -= instance.OnOpenBuildMenu;
+            @OpenBuildMenu.canceled -= instance.OnOpenBuildMenu;
         }
 
         /// <summary>
@@ -1336,6 +1368,13 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnEnterBuild(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "OpenBuildMenu" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnOpenBuildMenu(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "UI" which allows adding and removing callbacks.

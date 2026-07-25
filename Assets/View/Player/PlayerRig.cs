@@ -47,9 +47,6 @@ namespace Aerow.View
                                  "look won't work. Parent a Camera under this object.", this);
         }
 
-        private void OnEnable() => SetCursorLocked(true);
-        private void OnDisable() => SetCursorLocked(false);
-
         private void Update()
         {
             if (!GameInput.IsInitialized)
@@ -63,20 +60,14 @@ namespace Aerow.View
                 return;
             }
 
-            // Escape frees the mouse for testing (no UI yet to own it).
-            if (GameInput.Global.EscapePressed)
-                SetCursorLocked(Cursor.lockState != CursorLockMode.Locked);
-
             Look();
             Move();
         }
 
         private void Look()
         {
-            // Only steer while the cursor is captured. Mouse delta is already per-frame, so it
-            // is NOT scaled by deltaTime.
-            if (Cursor.lockState != CursorLockMode.Locked) return;
-
+            // Mouse delta is already per-frame, so it is NOT scaled by deltaTime. While a menu
+            // owns input the OnFoot map is disabled, so Look reads zero — no cursor check needed.
             Vector2 look = GameInput.OnFoot.Look * lookSensitivity;
 
             transform.Rotate(Vector3.up, look.x); // yaw the body
@@ -106,12 +97,6 @@ namespace Aerow.View
 
             Vector3 velocity = planar + Vector3.up * _verticalVelocity;
             _controller.Move(velocity * Time.deltaTime);
-        }
-
-        private static void SetCursorLocked(bool locked)
-        {
-            Cursor.lockState = locked ? CursorLockMode.Locked : CursorLockMode.None;
-            Cursor.visible = !locked;
         }
     }
 }

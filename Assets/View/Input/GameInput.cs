@@ -117,7 +117,15 @@ namespace Aerow.View.Input
             public static bool SecondaryHeld => _actions.OnFoot.Secondary.IsPressed();
 
             public static bool ToggleInventoryPressed => _actions.OnFoot.ToggleInventory.WasPressedThisFrame();
-            public static bool EnterBuildPressed => _actions.OnFoot.EnterBuild.WasPressedThisFrame();
+
+            // Q — opens the build menu (handled by MenuManager).
+            public static bool OpenBuildMenuPressed => _actions.OnFoot.OpenBuildMenu.WasPressedThisFrame();
+
+            // B — toggles the hotbar between the item/build layout (0-9, Minecraft/Satisfactory)
+            // and the combat layout (number keys map to weapons, Helldivers-style). The underlying
+            // action is still named "EnterBuild" in the .inputactions asset (a rename candidate).
+            // No hotbar system consumes this yet.
+            public static bool ToggleHotbarModePressed => _actions.OnFoot.EnterBuild.WasPressedThisFrame();
         }
 
         public static class UI
