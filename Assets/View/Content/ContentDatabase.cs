@@ -18,6 +18,9 @@ namespace Aerow.View
         [Tooltip("Every item in the game. Use the context menu 'Collect All Content From Project' to auto-fill.")]
         public List<ItemDefSO> items = new List<ItemDefSO>();
 
+        [Tooltip("Every block in the game.")]
+        public List<BlockDefSO> blocks = new List<BlockDefSO>();
+
         /// <summary>
         /// Register all listed SOs into a fresh sim catalogue and build the visual lookup.
         /// Registration is sorted by StringId so runtime ids are deterministic regardless of
@@ -46,18 +49,36 @@ namespace Aerow.View
             }
 
 
-            return new GameContent(itemCat, visuals.ToArray());
+            // --- Blocks (built after items so build-cost item refs resolve) ---
+            var blockCat = new BlockCatalogue();
+            var sortedBlocks = new List<BlockDefSO>(blocks);
+            sortedBlocks.Sort((a, b) => string.CompareOrdinal(IdOf(a), IdOf(b)));
+
+            var blockVisuals = new List<BlockDefSO>(sortedBlocks.Count);
+            foreach (BlockDefSO so in sortedBlocks)
+            {
+                if (so == null) continue;
+                if (string.IsNullOrWhiteSpace(so.stringId))
+                    throw new InvalidOperationException($"Block SO '{so.name}' has an empty stringId.");
+
+                blockCat.Register(so.ToDefinition(itemCat));
+                blockVisuals.Add(so);
+            }
+
+            return new GameContent(itemCat, visuals.ToArray(), blockCat, blockVisuals.ToArray());
         }
 
         private static string IdOf(ItemDefSO so) => so == null ? "" : so.stringId ?? "";
+        private static string IdOf(BlockDefSO so) => so == null ? "" : so.stringId ?? "";
 
 #if UNITY_EDITOR
         [ContextMenu("Collect All Content From Project")]
         private void CollectAllContent()
         {
             items = FindAllAssets<ItemDefSO>();
+            blocks = FindAllAssets<BlockDefSO>();
             UnityEditor.EditorUtility.SetDirty(this);
-            Debug.Log($"[ContentDatabase] Collected {items.Count} item(s).");
+            Debug.Log($"[ContentDatabase] Collected {items.Count} item(s), {blocks.Count} block(s).");
         }
 
         [ContextMenu("Validate (Build In Editor)")]
@@ -66,7 +87,7 @@ namespace Aerow.View
             try
             {
                 GameContent content = Build();
-                Debug.Log($"[ContentDatabase] Build OK — {content.Items.Count} item(s).");
+                Debug.Log($"[ContentDatabase] Build OK — {content.Items.Count} item(s), {content.Blocks.Count} block(s).");
             }
             catch (Exception e)
             {

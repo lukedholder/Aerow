@@ -49,6 +49,7 @@ namespace Aerow.View.UI
             }
 
             UpdateCursor();
+            Debug.Log($"[MenuManager] Registered {_byId.Count} panel(s)."); // TEMP DEBUG
         }
 
         private void OnDestroy()
@@ -102,6 +103,7 @@ namespace Aerow.View.UI
             if (panel.PausesGame && _pauseCount++ == 0) Time.timeScale = 0f;
 
             UpdateCursor();
+            Debug.Log($"[MenuManager] Open {id} (stack {_stack.Count})."); // TEMP DEBUG
         }
 
         public void Close(MenuId id)
@@ -115,6 +117,7 @@ namespace Aerow.View.UI
             if (panel.PausesGame && --_pauseCount == 0) Time.timeScale = 1f;
 
             UpdateCursor();
+            Debug.Log($"[MenuManager] Close {id} (stack {_stack.Count})."); // TEMP DEBUG
         }
 
         public void CloseAll()

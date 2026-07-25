@@ -38,9 +38,12 @@ namespace Aerow.View
             }
             _instance = this;
 
+            Debug.Log("[GameBootstrap] Bootstrapping…", this); // TEMP DEBUG
+
             // Bring the input layer online. Independent of content, so it runs even if the
             // content build below fails — you still want the game controllable.
             GameInput.Initialize();
+            Debug.Log("[GameBootstrap] Input layer online.", this); // TEMP DEBUG
 
             if (contentDatabase == null)
             {
@@ -61,8 +64,10 @@ namespace Aerow.View
                 return;
             }
 
-            Debug.Log($"[GameBootstrap] Content loaded — {Content.Items.Count} item(s).", this);
+            Debug.Log($"[GameBootstrap] Content loaded — {Content.Items.Count} item(s), " +
+                      $"{Content.Blocks.Count} block(s).", this); // TEMP DEBUG
             DontDestroyOnLoad(gameObject);
+            Debug.Log("[GameBootstrap] Ready.", this); // TEMP DEBUG
         }
 
         private void OnDestroy()

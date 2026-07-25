@@ -115,6 +115,21 @@ classDiagram
             +BuildChunkMesh(GridPos) Mesh
             +BuildChunkColliders(GridPos) void
         }
+        class PlacementController {
+            <<MonoBehaviour>>
+            +BlockId currentBlock
+            +BlockOrientation currentOrientation
+            +float reach
+            +TryPlace() void
+            +TryRemove() void
+        }
+        class GridSpace {
+            <<static>>
+            +float CellSize$
+            +LocalToCell(Vector3) GridPos
+            +CellToLocal(GridPos) Vector3
+            +NearestAxis(Vector3) GridPos
+        }
     }
 
     BlockDef --> BlockId : Id
@@ -137,6 +152,11 @@ classDiagram
     RotorJointView "1" --> "2" ConstructView : joins parent/child bodies
     ConstructView --> ConstructMesher : Rebuild()
     ConstructMesher ..> Construct : reads occupancy → Mesh + colliders
+    ConstructMesher ..> GridSpace : uses
+    PlacementController ..> ConstructView : raycast picks
+    PlacementController ..> Construct : CanPlace / PlaceBlock / RemoveBlock
+    PlacementController ..> GridSpace : uses
+    GridSpace ..> GridPos : cell ↔ local
 ```
 
 ## Rotor joints (subgrids)

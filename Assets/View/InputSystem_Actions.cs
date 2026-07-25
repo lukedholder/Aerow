@@ -229,6 +229,114 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Hotbar1"",
+                    ""type"": ""Button"",
+                    ""id"": ""6c3200cf-0cad-4db1-9212-4d168c44da02"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Hotbar2"",
+                    ""type"": ""Button"",
+                    ""id"": ""7b1f951c-cbe0-43dc-a45b-364443c937ae"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Hotbar3"",
+                    ""type"": ""Button"",
+                    ""id"": ""448706c0-85e9-4707-a4e8-77ba1402beef"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Hotbar4"",
+                    ""type"": ""Button"",
+                    ""id"": ""6ce0cd1d-409d-44fe-b25c-66909065767f"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Hotbar5"",
+                    ""type"": ""Button"",
+                    ""id"": ""11ff9fb6-b60b-4f48-b384-28d24422390f"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Hotbar6"",
+                    ""type"": ""Button"",
+                    ""id"": ""9bc2fa18-a233-4976-b753-218a0497cd29"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Hotbar7"",
+                    ""type"": ""Button"",
+                    ""id"": ""82056961-2813-4ce7-835c-5b290817001e"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Hotbar8"",
+                    ""type"": ""Button"",
+                    ""id"": ""dc389a31-e07f-43be-8de8-ecb256bdbe3d"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Hotbar9"",
+                    ""type"": ""Button"",
+                    ""id"": ""fffc4516-743b-4767-aff3-bad94f4e76a1"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Hotbar0"",
+                    ""type"": ""Button"",
+                    ""id"": ""8ce556ef-3155-4eab-83da-66f6a4dfb001"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""CycleRotationAxis"",
+                    ""type"": ""Button"",
+                    ""id"": ""20f00be0-315b-4ffd-a4fd-c35e9b927406"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Rotate"",
+                    ""type"": ""Value"",
+                    ""id"": ""ba0da4ab-d1eb-4585-958a-41b68c726510"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -383,6 +491,138 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""OpenBuildMenu"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""e8e20367-ce1b-4462-aa20-886828ffa830"",
+                    ""path"": ""<Keyboard>/1"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Hotbar1"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""5dda4e50-3b28-430e-8648-c403d9ab5e53"",
+                    ""path"": ""<Keyboard>/2"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Hotbar2"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""7b6507b8-12e8-417e-bd50-6d354390d221"",
+                    ""path"": ""<Keyboard>/3"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Hotbar3"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""5ed66e23-39c4-48eb-ba54-759c0a7d11af"",
+                    ""path"": ""<Keyboard>/4"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Hotbar4"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""79c0324e-22a5-4b71-90e2-68028a9ec10a"",
+                    ""path"": ""<Keyboard>/5"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Hotbar5"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""6e9d4c46-50be-4f8e-9299-158d9dee253a"",
+                    ""path"": ""<Keyboard>/6"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Hotbar6"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""a35b61d7-b83a-480e-88a4-cda336a8f65e"",
+                    ""path"": ""<Keyboard>/7"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Hotbar7"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d99c9abe-0c65-486d-8ace-a831bfb96b76"",
+                    ""path"": ""<Keyboard>/8"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Hotbar8"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""de65cadb-19da-4622-b70c-bcb61ff2f1fb"",
+                    ""path"": ""<Keyboard>/9"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Hotbar9"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""21ae681c-da27-48ba-ac33-85ed2b6d0f87"",
+                    ""path"": ""<Keyboard>/0"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Hotbar0"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""0e999d9c-eb2d-45ff-9d59-86db98eeed41"",
+                    ""path"": ""<Mouse>/middleButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""CycleRotationAxis"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""57182fca-3517-4928-9bd5-459a7d74a084"",
+                    ""path"": ""<Mouse>/scroll"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Rotate"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -660,6 +900,18 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         m_OnFoot_ToggleInventory = m_OnFoot.FindAction("ToggleInventory", throwIfNotFound: true);
         m_OnFoot_EnterBuild = m_OnFoot.FindAction("EnterBuild", throwIfNotFound: true);
         m_OnFoot_OpenBuildMenu = m_OnFoot.FindAction("OpenBuildMenu", throwIfNotFound: true);
+        m_OnFoot_Hotbar1 = m_OnFoot.FindAction("Hotbar1", throwIfNotFound: true);
+        m_OnFoot_Hotbar2 = m_OnFoot.FindAction("Hotbar2", throwIfNotFound: true);
+        m_OnFoot_Hotbar3 = m_OnFoot.FindAction("Hotbar3", throwIfNotFound: true);
+        m_OnFoot_Hotbar4 = m_OnFoot.FindAction("Hotbar4", throwIfNotFound: true);
+        m_OnFoot_Hotbar5 = m_OnFoot.FindAction("Hotbar5", throwIfNotFound: true);
+        m_OnFoot_Hotbar6 = m_OnFoot.FindAction("Hotbar6", throwIfNotFound: true);
+        m_OnFoot_Hotbar7 = m_OnFoot.FindAction("Hotbar7", throwIfNotFound: true);
+        m_OnFoot_Hotbar8 = m_OnFoot.FindAction("Hotbar8", throwIfNotFound: true);
+        m_OnFoot_Hotbar9 = m_OnFoot.FindAction("Hotbar9", throwIfNotFound: true);
+        m_OnFoot_Hotbar0 = m_OnFoot.FindAction("Hotbar0", throwIfNotFound: true);
+        m_OnFoot_CycleRotationAxis = m_OnFoot.FindAction("CycleRotationAxis", throwIfNotFound: true);
+        m_OnFoot_Rotate = m_OnFoot.FindAction("Rotate", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -868,6 +1120,18 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
     private readonly InputAction m_OnFoot_ToggleInventory;
     private readonly InputAction m_OnFoot_EnterBuild;
     private readonly InputAction m_OnFoot_OpenBuildMenu;
+    private readonly InputAction m_OnFoot_Hotbar1;
+    private readonly InputAction m_OnFoot_Hotbar2;
+    private readonly InputAction m_OnFoot_Hotbar3;
+    private readonly InputAction m_OnFoot_Hotbar4;
+    private readonly InputAction m_OnFoot_Hotbar5;
+    private readonly InputAction m_OnFoot_Hotbar6;
+    private readonly InputAction m_OnFoot_Hotbar7;
+    private readonly InputAction m_OnFoot_Hotbar8;
+    private readonly InputAction m_OnFoot_Hotbar9;
+    private readonly InputAction m_OnFoot_Hotbar0;
+    private readonly InputAction m_OnFoot_CycleRotationAxis;
+    private readonly InputAction m_OnFoot_Rotate;
     /// <summary>
     /// Provides access to input actions defined in input action map "OnFoot".
     /// </summary>
@@ -919,6 +1183,54 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "OnFoot/OpenBuildMenu".
         /// </summary>
         public InputAction @OpenBuildMenu => m_Wrapper.m_OnFoot_OpenBuildMenu;
+        /// <summary>
+        /// Provides access to the underlying input action "OnFoot/Hotbar1".
+        /// </summary>
+        public InputAction @Hotbar1 => m_Wrapper.m_OnFoot_Hotbar1;
+        /// <summary>
+        /// Provides access to the underlying input action "OnFoot/Hotbar2".
+        /// </summary>
+        public InputAction @Hotbar2 => m_Wrapper.m_OnFoot_Hotbar2;
+        /// <summary>
+        /// Provides access to the underlying input action "OnFoot/Hotbar3".
+        /// </summary>
+        public InputAction @Hotbar3 => m_Wrapper.m_OnFoot_Hotbar3;
+        /// <summary>
+        /// Provides access to the underlying input action "OnFoot/Hotbar4".
+        /// </summary>
+        public InputAction @Hotbar4 => m_Wrapper.m_OnFoot_Hotbar4;
+        /// <summary>
+        /// Provides access to the underlying input action "OnFoot/Hotbar5".
+        /// </summary>
+        public InputAction @Hotbar5 => m_Wrapper.m_OnFoot_Hotbar5;
+        /// <summary>
+        /// Provides access to the underlying input action "OnFoot/Hotbar6".
+        /// </summary>
+        public InputAction @Hotbar6 => m_Wrapper.m_OnFoot_Hotbar6;
+        /// <summary>
+        /// Provides access to the underlying input action "OnFoot/Hotbar7".
+        /// </summary>
+        public InputAction @Hotbar7 => m_Wrapper.m_OnFoot_Hotbar7;
+        /// <summary>
+        /// Provides access to the underlying input action "OnFoot/Hotbar8".
+        /// </summary>
+        public InputAction @Hotbar8 => m_Wrapper.m_OnFoot_Hotbar8;
+        /// <summary>
+        /// Provides access to the underlying input action "OnFoot/Hotbar9".
+        /// </summary>
+        public InputAction @Hotbar9 => m_Wrapper.m_OnFoot_Hotbar9;
+        /// <summary>
+        /// Provides access to the underlying input action "OnFoot/Hotbar0".
+        /// </summary>
+        public InputAction @Hotbar0 => m_Wrapper.m_OnFoot_Hotbar0;
+        /// <summary>
+        /// Provides access to the underlying input action "OnFoot/CycleRotationAxis".
+        /// </summary>
+        public InputAction @CycleRotationAxis => m_Wrapper.m_OnFoot_CycleRotationAxis;
+        /// <summary>
+        /// Provides access to the underlying input action "OnFoot/Rotate".
+        /// </summary>
+        public InputAction @Rotate => m_Wrapper.m_OnFoot_Rotate;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -975,6 +1287,42 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
             @OpenBuildMenu.started += instance.OnOpenBuildMenu;
             @OpenBuildMenu.performed += instance.OnOpenBuildMenu;
             @OpenBuildMenu.canceled += instance.OnOpenBuildMenu;
+            @Hotbar1.started += instance.OnHotbar1;
+            @Hotbar1.performed += instance.OnHotbar1;
+            @Hotbar1.canceled += instance.OnHotbar1;
+            @Hotbar2.started += instance.OnHotbar2;
+            @Hotbar2.performed += instance.OnHotbar2;
+            @Hotbar2.canceled += instance.OnHotbar2;
+            @Hotbar3.started += instance.OnHotbar3;
+            @Hotbar3.performed += instance.OnHotbar3;
+            @Hotbar3.canceled += instance.OnHotbar3;
+            @Hotbar4.started += instance.OnHotbar4;
+            @Hotbar4.performed += instance.OnHotbar4;
+            @Hotbar4.canceled += instance.OnHotbar4;
+            @Hotbar5.started += instance.OnHotbar5;
+            @Hotbar5.performed += instance.OnHotbar5;
+            @Hotbar5.canceled += instance.OnHotbar5;
+            @Hotbar6.started += instance.OnHotbar6;
+            @Hotbar6.performed += instance.OnHotbar6;
+            @Hotbar6.canceled += instance.OnHotbar6;
+            @Hotbar7.started += instance.OnHotbar7;
+            @Hotbar7.performed += instance.OnHotbar7;
+            @Hotbar7.canceled += instance.OnHotbar7;
+            @Hotbar8.started += instance.OnHotbar8;
+            @Hotbar8.performed += instance.OnHotbar8;
+            @Hotbar8.canceled += instance.OnHotbar8;
+            @Hotbar9.started += instance.OnHotbar9;
+            @Hotbar9.performed += instance.OnHotbar9;
+            @Hotbar9.canceled += instance.OnHotbar9;
+            @Hotbar0.started += instance.OnHotbar0;
+            @Hotbar0.performed += instance.OnHotbar0;
+            @Hotbar0.canceled += instance.OnHotbar0;
+            @CycleRotationAxis.started += instance.OnCycleRotationAxis;
+            @CycleRotationAxis.performed += instance.OnCycleRotationAxis;
+            @CycleRotationAxis.canceled += instance.OnCycleRotationAxis;
+            @Rotate.started += instance.OnRotate;
+            @Rotate.performed += instance.OnRotate;
+            @Rotate.canceled += instance.OnRotate;
         }
 
         /// <summary>
@@ -1016,6 +1364,42 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
             @OpenBuildMenu.started -= instance.OnOpenBuildMenu;
             @OpenBuildMenu.performed -= instance.OnOpenBuildMenu;
             @OpenBuildMenu.canceled -= instance.OnOpenBuildMenu;
+            @Hotbar1.started -= instance.OnHotbar1;
+            @Hotbar1.performed -= instance.OnHotbar1;
+            @Hotbar1.canceled -= instance.OnHotbar1;
+            @Hotbar2.started -= instance.OnHotbar2;
+            @Hotbar2.performed -= instance.OnHotbar2;
+            @Hotbar2.canceled -= instance.OnHotbar2;
+            @Hotbar3.started -= instance.OnHotbar3;
+            @Hotbar3.performed -= instance.OnHotbar3;
+            @Hotbar3.canceled -= instance.OnHotbar3;
+            @Hotbar4.started -= instance.OnHotbar4;
+            @Hotbar4.performed -= instance.OnHotbar4;
+            @Hotbar4.canceled -= instance.OnHotbar4;
+            @Hotbar5.started -= instance.OnHotbar5;
+            @Hotbar5.performed -= instance.OnHotbar5;
+            @Hotbar5.canceled -= instance.OnHotbar5;
+            @Hotbar6.started -= instance.OnHotbar6;
+            @Hotbar6.performed -= instance.OnHotbar6;
+            @Hotbar6.canceled -= instance.OnHotbar6;
+            @Hotbar7.started -= instance.OnHotbar7;
+            @Hotbar7.performed -= instance.OnHotbar7;
+            @Hotbar7.canceled -= instance.OnHotbar7;
+            @Hotbar8.started -= instance.OnHotbar8;
+            @Hotbar8.performed -= instance.OnHotbar8;
+            @Hotbar8.canceled -= instance.OnHotbar8;
+            @Hotbar9.started -= instance.OnHotbar9;
+            @Hotbar9.performed -= instance.OnHotbar9;
+            @Hotbar9.canceled -= instance.OnHotbar9;
+            @Hotbar0.started -= instance.OnHotbar0;
+            @Hotbar0.performed -= instance.OnHotbar0;
+            @Hotbar0.canceled -= instance.OnHotbar0;
+            @CycleRotationAxis.started -= instance.OnCycleRotationAxis;
+            @CycleRotationAxis.performed -= instance.OnCycleRotationAxis;
+            @CycleRotationAxis.canceled -= instance.OnCycleRotationAxis;
+            @Rotate.started -= instance.OnRotate;
+            @Rotate.performed -= instance.OnRotate;
+            @Rotate.canceled -= instance.OnRotate;
         }
 
         /// <summary>
@@ -1375,6 +1759,90 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnOpenBuildMenu(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Hotbar1" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnHotbar1(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Hotbar2" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnHotbar2(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Hotbar3" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnHotbar3(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Hotbar4" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnHotbar4(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Hotbar5" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnHotbar5(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Hotbar6" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnHotbar6(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Hotbar7" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnHotbar7(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Hotbar8" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnHotbar8(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Hotbar9" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnHotbar9(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Hotbar0" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnHotbar0(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "CycleRotationAxis" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnCycleRotationAxis(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Rotate" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnRotate(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "UI" which allows adding and removing callbacks.
