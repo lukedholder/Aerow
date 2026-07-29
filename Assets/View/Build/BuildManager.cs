@@ -143,7 +143,10 @@ namespace Aerow.View.Build
                 Vector3 localPoint = t.InverseTransformPoint(hit.point);
                 Vector3 localNormal = t.InverseTransformDirection(hit.normal);
                 GridPos faceDir = GridSpace.NearestAxis(localNormal);
-                GridPos hitCell = GridSpace.LocalToCell(localPoint - localNormal * (0.5f * GridSpace.CellSize));
+                // Nudge just inside the surface so the hit resolves to the cell actually struck.
+                // A small epsilon (rather than half a cell) also works for angled faces, where the
+                // hit point lies inside the cell instead of on its boundary.
+                GridPos hitCell = GridSpace.LocalToCell(localPoint - localNormal * (0.01f * GridSpace.CellSize));
 
                 target = new BuildTarget
                 {

@@ -187,21 +187,6 @@ namespace Aerow.View
 
         private static Vector3 ToV3(GridPos p) => new Vector3(p.X, p.Y, p.Z);
 
-        public static void RebuildColliders(Construct construct, GameObject go)
-        {
-            // Minimal: one BoxCollider per cell — a slope still collides as a full cube for now.
-            BoxCollider[] existing = go.GetComponents<BoxCollider>();
-            for (int i = 0; i < existing.Length; i++) Object.Destroy(existing[i]);
-
-            float s = GridSpace.CellSize;
-            foreach (GridPos cell in construct.OccupiedCells)
-            {
-                BoxCollider bc = go.AddComponent<BoxCollider>();
-                bc.center = GridSpace.CellToLocal(cell);
-                bc.size = new Vector3(s, s, s);
-            }
-        }
-
         // ── Source-mesh cache ──
         // Mesh.vertices/normals/uv/triangles allocate a fresh array on every access, so read each
         // authored mesh once. Cleared by ClearCache() if a mesh asset changes at runtime.
