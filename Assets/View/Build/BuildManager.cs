@@ -46,6 +46,8 @@ namespace Aerow.View.Build
         // --- Ghost preview instance (created at runtime). ---
         private GameObject _ghost;
         private Renderer _ghostRenderer;
+        private MeshFilter _ghostFilter;
+        private Mesh _cubeMesh; // fallback for blocks with no authored mesh
         private Material _ghostMat;
 
         // --- Cached raycast target for the debug overlay. ---
@@ -226,26 +228,40 @@ namespace Aerow.View.Build
         {
             EnsureGhost();
 
-            Vector3 centre;
-            Quaternion rot;
+            // Mirror ConstructMesher's pose maths exactly, so the preview is WYSIWYG: rotate about
+            // the anchor cell's centre, offset to the geometric centre by the rotated half-span.
+            Quaternion q = ConstructMesher.ToRotation(_currentOrientation);
+            GridPos size = currentBlockDef.Size;
+            var halfSpan = new Vector3(size.X - 1, size.Y - 1, size.Z - 1) * (0.5f * GridSpace.CellSize);
+
+            Vector3 worldPos;
+            Quaternion worldRot;
             bool valid;
 
             if (target.OnTerrain)
             {
-                ComputeTerrainPose(target, out Vector3 cpos, out rot);
-                centre = cpos + rot * GridSpace.CellToLocal(GridPos.Zero);
+                ComputeTerrainPose(target, out Vector3 cpos, out Quaternion crot);
+                worldPos = cpos + crot * (GridSpace.CellToLocal(GridPos.Zero) + q * halfSpan);
+                worldRot = crot * q;
                 valid = true; // a fresh construct always seeds
             }
             else
             {
                 Transform t = target.Construct.transform;
-                rot = t.rotation;
-                centre = t.TransformPoint(GridSpace.CellToLocal(target.PlaceCell));
+                worldPos = t.TransformPoint(GridSpace.CellToLocal(target.PlaceCell) + q * halfSpan);
+                worldRot = t.rotation * q;
                 valid = target.Construct.Construct.CanPlace(currentBlockDef.Id, target.PlaceCell, _currentOrientation);
             }
 
-            _ghost.transform.SetPositionAndRotation(centre, rot);
-            _ghost.transform.localScale = Vector3.one * GridSpace.CellSize;
+            // Authored meshes are already true world size; the cube fallback spans the footprint.
+            Mesh src = GameBootstrap.IsReady ? GameBootstrap.Content.MeshOf(currentBlockDef.Id) : null;
+            _ghostFilter.sharedMesh = src != null ? src : _cubeMesh;
+            Vector3 scale = src != null
+                ? Vector3.one * GridSpace.MeshScale
+                : new Vector3(size.X, size.Y, size.Z) * GridSpace.CellSize;
+
+            _ghost.transform.SetPositionAndRotation(worldPos, worldRot);
+            _ghost.transform.localScale = scale;
             if (_ghostMat != null) _ghostMat.color = valid ? validTint : invalidTint;
             if (!_ghost.activeSelf) _ghost.SetActive(true);
         }
@@ -257,6 +273,9 @@ namespace Aerow.View.Build
             _ghost = GameObject.CreatePrimitive(PrimitiveType.Cube);
             _ghost.name = "BlockGhost";
             Destroy(_ghost.GetComponent<Collider>()); // preview must not block the build raycast
+
+            _ghostFilter = _ghost.GetComponent<MeshFilter>();
+            _cubeMesh = _ghostFilter.sharedMesh; // kept for blocks with no authored mesh
 
             _ghostRenderer = _ghost.GetComponent<Renderer>();
             _ghostMat = ghostMaterial != null

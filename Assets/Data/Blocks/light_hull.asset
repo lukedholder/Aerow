@@ -19,6 +19,6 @@ MonoBehaviour:
   maxHealth: 100
   mass: 10
   buildCost: []
-  mesh: {fileID: 0}
+  mesh: {fileID: -224567736768401773, guid: 5a74a67dc1c25a640b0555ae5dcb9c78, type: 3}
   material: {fileID: 2100000, guid: 2c1aa57200ba0cc4295cf379f4852181, type: 2}
   icon: {fileID: 0}

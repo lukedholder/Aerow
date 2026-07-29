@@ -178,7 +178,7 @@ namespace Aerow.View
         /// Exact 90°-step rotation for one of the 24 orientations, rebuilt from the integer basis
         /// (<see cref="BlockOrientation.Rotate"/> moves grid cells; meshes need a quaternion).
         /// </summary>
-        private static Quaternion ToRotation(BlockOrientation o)
+        public static Quaternion ToRotation(BlockOrientation o)
         {
             Vector3 fwd = ToV3(o.Rotate(GridPos.Forward));
             Vector3 up = ToV3(o.Rotate(GridPos.Up));
