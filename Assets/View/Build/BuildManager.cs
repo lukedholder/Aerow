@@ -33,9 +33,14 @@ namespace Aerow.View.Build
         [Tooltip("Material for newly-seeded constructs (used when the block itself has no material).")]
         [SerializeField] private Material constructMaterial;
 
+        [Tooltip("Degrees per scroll click when free-rotating a new construct on terrain.")]
+        [SerializeField] private float terrainYawStep = 15f;
+
         // --- Held selection (for now driven by hotbar keys 1..N over GameContent.Blocks). ---
         private BlockDef currentBlockDef;             // the selected block; null = nothing in hand
-        private BlockOrientation _currentOrientation; // cycled by rotate input
+        private BlockOrientation _currentOrientation; // 90° block orientation, on existing constructs
+        private RotationAxis _rotationAxis = RotationAxis.Y; // axis the scroll wheel turns (middle-click cycles)
+        private float _terrainYaw;                    // free yaw offset for a new construct on terrain
 
         [Header("Ghost")]
         [Tooltip("Material for the placement preview — a transparent material reads best.")]
@@ -76,7 +81,7 @@ namespace Aerow.View.Build
 
             if (!HasBlockSelected) { HideGhost(); return; }
 
-            CycleOrientationFromInput();
+            UpdateRotationInput(_lastTarget.OnTerrain);
             UpdateGhost(_lastTarget);
 
             if (GameInput.OnFoot.PrimaryPressed) Place(_lastTarget);
@@ -187,7 +192,7 @@ namespace Aerow.View.Build
                 ConstructView view = ConstructFactory.Create(GameBootstrap.Content.Blocks, pos, rot, mat);
                 Construct c = view.Construct;
                 c.IsAnchored = anchorNewConstructs;
-                c.PlaceBlock(currentBlockDef.Id, GridPos.Zero, _currentOrientation);
+                c.PlaceBlock(currentBlockDef.Id, GridPos.Zero, OrientationFor(true));
                 view.Rebuild();
 
                 Debug.Log($"[BuildManager] Seeded construct #{c.Id} at {pos} with '{currentBlockDef.DisplayName}'."); // TEMP DEBUG
@@ -230,7 +235,8 @@ namespace Aerow.View.Build
 
             // Mirror ConstructMesher's pose maths exactly, so the preview is WYSIWYG: rotate about
             // the anchor cell's centre, offset to the geometric centre by the rotated half-span.
-            Quaternion q = ConstructMesher.ToRotation(_currentOrientation);
+            BlockOrientation orient = OrientationFor(target.OnTerrain);
+            Quaternion q = ConstructMesher.ToRotation(orient);
             GridPos size = currentBlockDef.Size;
             var halfSpan = new Vector3(size.X - 1, size.Y - 1, size.Z - 1) * (0.5f * GridSpace.CellSize);
 
@@ -250,7 +256,7 @@ namespace Aerow.View.Build
                 Transform t = target.Construct.transform;
                 worldPos = t.TransformPoint(GridSpace.CellToLocal(target.PlaceCell) + q * halfSpan);
                 worldRot = t.rotation * q;
-                valid = target.Construct.Construct.CanPlace(currentBlockDef.Id, target.PlaceCell, _currentOrientation);
+                valid = target.Construct.Construct.CanPlace(currentBlockDef.Id, target.PlaceCell, orient);
             }
 
             // Authored meshes are already true world size; the cube fallback spans the footprint.
@@ -296,24 +302,60 @@ namespace Aerow.View.Build
             if (_ghostMat != null) Destroy(_ghostMat);
         }
 
-        private void CycleOrientationFromInput()
+        /// <summary>
+        /// Middle-click cycles the rotation axis; the scroll wheel turns the block about it.
+        /// On terrain only yaw applies (free-form placement), in <see cref="terrainYawStep"/>
+        /// increments; on a construct the block snaps through the 24 grid orientations.
+        /// </summary>
+        private void UpdateRotationInput(bool onTerrain)
         {
-            // TODO: rotate the held block. Needs a rotate input — either bind Scroll (GameInput.UI
-            //       is UI-only, so add a "Rotate" action to the OnFoot/Build map) or an R key.
-            //   if (rotatePressed) _currentOrientation = _currentOrientation.Next();
+            if (GameInput.OnFoot.CycleAxisPressed)
+            {
+                _rotationAxis = (RotationAxis)(((int)_rotationAxis + 1) % 3);
+                Debug.Log($"[BuildManager] Rotation axis → {_rotationAxis}."); // TEMP DEBUG
+            }
+
+            int steps = GameInput.OnFoot.ScrollSteps();
+            if (steps == 0) return;
+
+            if (onTerrain)
+            {
+                _terrainYaw = Mathf.Repeat(_terrainYaw + steps * terrainYawStep, 360f);
+                Debug.Log($"[BuildManager] Terrain yaw → {_terrainYaw:0.#}°."); // TEMP DEBUG
+            }
+            else
+            {
+                _currentOrientation = _currentOrientation.RotatedAbout(_rotationAxis, steps);
+                Debug.Log($"[BuildManager] Orientation → {_currentOrientation.Index} " +
+                          $"(about {_rotationAxis})."); // TEMP DEBUG
+            }
         }
+
+        /// <summary>
+        /// On terrain the construct's own yaw carries the rotation, so the seed block sits
+        /// unrotated; on an existing construct the block uses the chosen grid orientation.
+        /// </summary>
+        private BlockOrientation OrientationFor(bool onTerrain)
+            => onTerrain ? BlockOrientation.Identity : _currentOrientation;
 
         // TEMP DEBUG — on-screen raycast / selection overlay.
         private void OnGUI()
         {
-            var rect = new Rect(10, 10, 340, 176);
+            var rect = new Rect(10, 10, 340, 210);
             GUILayout.BeginArea(rect, GUI.skin.box);
 
             GUILayout.Label("BuildManager (debug)");
             GUILayout.Label(HasBlockSelected
                 ? $"Block: {currentBlockDef.DisplayName}  (id {currentBlockDef.Id.Index})"
                 : "Block: <none>   press 1 / 2 to select");
-            GUILayout.Label($"Orientation: {_currentOrientation.Index}");
+
+            bool terrain = _hasTarget && _lastTarget.OnTerrain;
+            GUILayout.Label(terrain
+                ? $"Axis: Y (locked on terrain)   [MMB cycles: {_rotationAxis}]"
+                : $"Axis: {_rotationAxis}   [MMB to cycle, scroll to rotate]");
+            GUILayout.Label(terrain
+                ? $"Terrain yaw: {_terrainYaw:0.#}°  ({terrainYawStep:0.#}° / click)"
+                : $"Orientation: {_currentOrientation.Index} / 24");
             GUILayout.Space(4);
 
             if (_hasTarget)
@@ -352,12 +394,16 @@ namespace Aerow.View.Build
                 target.WorldPoint.z - offsetH.z);
         }
 
-        // Upright rotation facing the camera's horizontal direction — free yaw, no snapping.
+        // Upright rotation facing the camera's horizontal direction, plus the player's scroll-wheel
+        // yaw offset — free rotation, no snapping. (Drop the camera term for an absolute world yaw.)
         private Quaternion FacingYaw()
         {
             Vector3 fwd = playerCamera.transform.forward;
             fwd.y = 0f;
-            return fwd.sqrMagnitude > 0.0001f ? Quaternion.LookRotation(fwd, Vector3.up) : Quaternion.identity;
+            Quaternion facing = fwd.sqrMagnitude > 0.0001f
+                ? Quaternion.LookRotation(fwd, Vector3.up)
+                : Quaternion.identity;
+            return facing * Quaternion.Euler(0f, _terrainYaw, 0f);
         }
     }
 }

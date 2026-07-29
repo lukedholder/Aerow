@@ -23,8 +23,20 @@ namespace Aerow.Sim
         public static BlockOrientation FromIndex(int index) =>
             new BlockOrientation(((index % Count) + Count) % Count);
 
-        /// <summary>Next orientation, cycling 0..23 — handy for a "rotate block" key.</summary>
+        /// <summary>Next orientation, cycling 0..23 — arbitrary order, mostly for debugging.</summary>
         public BlockOrientation Next() => new BlockOrientation((Index + 1) % Count);
+
+        /// <summary>
+        /// This orientation turned <paramref name="quarterTurns"/> × 90° about a construct-space
+        /// axis (negative turns the other way). Stays within the 24 valid orientations.
+        /// </summary>
+        public BlockOrientation RotatedAbout(RotationAxis axis, int quarterTurns = 1)
+        {
+            int n = ((quarterTurns % 4) + 4) % 4;
+            int idx = Index;
+            for (int i = 0; i < n; i++) idx = AxisStep[idx, (int)axis];
+            return new BlockOrientation(idx);
+        }
 
         /// <summary>Rotate a local offset into this orientation's frame.</summary>
         public GridPos Rotate(GridPos v)
@@ -58,12 +70,35 @@ namespace Aerow.Sim
 
         private static readonly Rot[] Rots = Generate();
 
+        /// <summary>[orientation, axis] → the orientation after one +90° turn about that axis.</summary>
+        private static readonly int[,] AxisStep = BuildAxisSteps();
+
+        /// <summary>90° generators about +X, +Y, +Z (right-hand rule), in RotationAxis order.</summary>
+        private static Rot[] AxisGenerators() => new[]
+        {
+            new Rot(GridPos.Right, GridPos.Forward, GridPos.Down),  // X: y→z, z→-y
+            new Rot(GridPos.Back,  GridPos.Up,      GridPos.Right), // Y: x→-z, z→x
+            new Rot(GridPos.Up,    GridPos.Left,    GridPos.Forward),// Z: x→y, y→-x
+        };
+
+        private static int[,] BuildAxisSteps()
+        {
+            var indexOf = new Dictionary<long, int>();
+            for (int i = 0; i < Rots.Length; i++) indexOf[Rots[i].Key()] = i;
+
+            Rot[] gens = AxisGenerators();
+            var table = new int[Count, 3];
+            for (int i = 0; i < Count; i++)
+                for (int a = 0; a < 3; a++)
+                    // gen ∘ current → the turn happens about the construct's axis, not the block's.
+                    table[i, a] = indexOf[gens[a].Compose(Rots[i]).Key()];
+            return table;
+        }
+
         private static Rot[] Generate()
         {
             var identity = new Rot(GridPos.Right, GridPos.Up, GridPos.Forward);
-            var rx = new Rot(GridPos.Right, GridPos.Forward, GridPos.Down); // 90° about X: y→z, z→-y
-            var ry = new Rot(GridPos.Back, GridPos.Up, GridPos.Right);      // 90° about Y: x→-z, z→x
-            var generators = new[] { rx, ry };
+            Rot[] generators = AxisGenerators();
 
             var list = new List<Rot> { identity };
             var seen = new HashSet<long> { identity.Key() };

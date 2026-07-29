@@ -134,6 +134,23 @@ namespace Aerow.View.Input
             // No hotbar system consumes this yet.
             public static bool ToggleHotbarModePressed => _actions.OnFoot.EnterBuild.WasPressedThisFrame();
 
+            // TEMP: middle-click cycles the build rotation axis. Reads the mouse directly instead
+            // of through the .inputactions asset — add a real "CycleAxis" action to OnFoot later.
+            public static bool CycleAxisPressed =>
+                Mouse.current != null && Mouse.current.middleButton.wasPressedThisFrame;
+
+            // TEMP: scroll wheel as discrete detents (+1 up / -1 down / 0 none). The OnFoot map has
+            // no Scroll action yet — add one and route this through it later.
+            public static int ScrollSteps()
+            {
+                Mouse m = Mouse.current;
+                if (m == null) return 0;
+                float y = m.scroll.ReadValue().y;
+                if (y > 0.01f) return 1;
+                if (y < -0.01f) return -1;
+                return 0;
+            }
+
             // Hotbar slot pressed this frame (1..9), or 0 for none. TEMP: reads the number-row keys
             // directly instead of through the .inputactions asset — swap to real Hotbar actions later.
             public static int HotbarDigitPressed()
