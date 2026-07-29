@@ -26,6 +26,14 @@ namespace Aerow.View.Build
             Mathf.FloorToInt(local.y / CellSize),
             Mathf.FloorToInt(local.z / CellSize));
 
+        /// <summary>
+        /// Local point → continuous cell coordinates, where cell <c>i</c>'s centre maps to exactly
+        /// <c>i</c> and cell boundaries fall on half-integers. Used to snap a block's centre to a
+        /// cell centre (odd span) or a cell vertex (even span).
+        /// </summary>
+        public static Vector3 LocalToCellPoint(Vector3 local) =>
+            local / CellSize - new Vector3(0.5f, 0.5f, 0.5f);
+
         /// <summary>Cell → its centre in local space (for ghosts, block placement).</summary>
         public static Vector3 CellToLocal(GridPos cell) => new Vector3(
             (cell.X + 0.5f) * CellSize,

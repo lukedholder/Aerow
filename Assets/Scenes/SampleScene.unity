@@ -891,6 +891,7 @@ MonoBehaviour:
   terrainTag: Terrain
   anchorNewConstructs: 1
   constructMaterial: {fileID: 0}
+  terrainYawStep: 15
   ghostMaterial: {fileID: 2100000, guid: 93caccb41c0743f449a85ccce57bc311, type: 2}
   validTint: {r: 0.3, g: 1, b: 0.3, a: 0.5}
   invalidTint: {r: 1, g: 0.3, b: 0.3, a: 0.5}

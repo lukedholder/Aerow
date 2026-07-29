@@ -117,7 +117,8 @@ namespace Aerow.View.Build
             public bool OnTerrain;          // true → seed a new construct
             public ConstructView Construct; // null when OnTerrain
             public GridPos HitCell;         // existing block cell (for removal)
-            public GridPos PlaceCell;       // empty neighbour cell (for placement)
+            public GridPos FaceDir;         // outward normal of the hit face, in the construct's grid
+            public Vector3 CellPoint;       // hit point in continuous cell coords (cell i centre == i)
             public Vector3 WorldPoint;
             public Vector3 WorldNormal;
         }
@@ -149,7 +150,8 @@ namespace Aerow.View.Build
                     OnTerrain = false,
                     Construct = view,
                     HitCell = hitCell,
-                    PlaceCell = hitCell + faceDir,
+                    FaceDir = faceDir,
+                    CellPoint = GridSpace.LocalToCellPoint(localPoint),
                     WorldPoint = hit.point,
                     WorldNormal = hit.normal,
                 };
@@ -162,8 +164,7 @@ namespace Aerow.View.Build
                 target = new BuildTarget
                 {
                     OnTerrain = true,
-                    Construct = null,
-                    PlaceCell = GridPos.Zero,   // first block sits at the new construct's local origin
+                    Construct = null,           // first block sits at the new construct's local origin
                     WorldPoint = hit.point,
                     WorldNormal = hit.normal,
                 };
@@ -171,6 +172,60 @@ namespace Aerow.View.Build
             }
 
             return false; // hit something that isn't buildable
+        }
+
+        /// <summary>
+        /// Work out where a block of the current size/orientation should sit against the targeted
+        /// face, and return its <b>anchor</b> cell.
+        ///
+        /// The block is positioned by its <b>centre</b>, not its anchor corner, so rotating spins it
+        /// in place instead of swinging its bulk to another side of whatever it rests on. Across the
+        /// face the centre snaps to the nearest cell vertex (even span) or cell centre (odd span) —
+        /// i.e. the nearest corner of the face for a 2-cell-wide block. Along the face normal it
+        /// sits flush against the surface. The anchor is then derived as
+        /// <c>centre − rotate((Size−1)/2)</c>, which always lands on an integer cell.
+        /// </summary>
+        private GridPos ComputeAnchor(in BuildTarget target, BlockOrientation orient)
+        {
+            GridPos size = currentBlockDef.Size;
+
+            // Footprint AABB after rotation, in cells (per-axis span).
+            GridPos r = orient.Rotate(size);
+            var rotSize = new Vector3Int(Mathf.Abs(r.X), Mathf.Abs(r.Y), Mathf.Abs(r.Z));
+
+            var hitCell = new Vector3(target.HitCell.X, target.HitCell.Y, target.HitCell.Z);
+            var faceDir = new Vector3(target.FaceDir.X, target.FaceDir.Y, target.FaceDir.Z);
+            Vector3 p = target.CellPoint;
+
+            Vector3 centre = Vector3.zero;
+            for (int i = 0; i < 3; i++)
+            {
+                float half = rotSize[i] * 0.5f;
+
+                if (Mathf.Abs(faceDir[i]) > 0.5f)
+                {
+                    // Along the normal: clear the hit cell's face (½ cell), then half our own span.
+                    centre[i] = hitCell[i] + faceDir[i] * (0.5f + half);
+                }
+                else if (rotSize[i] % 2 == 0)
+                {
+                    centre[i] = Mathf.Floor(p[i]) + 0.5f; // even span → centre lands on a cell vertex
+                }
+                else
+                {
+                    centre[i] = Mathf.Round(p[i]);        // odd span → centre lands on a cell centre
+                }
+            }
+
+            // Rotate is integer-only, so rotate (Size−1) and halve — Rotate is linear, so this
+            // equals rotate((Size−1)/2).
+            GridPos rs = orient.Rotate(new GridPos(size.X - 1, size.Y - 1, size.Z - 1));
+            Vector3 anchorF = centre - new Vector3(rs.X, rs.Y, rs.Z) * 0.5f;
+
+            return new GridPos(
+                Mathf.RoundToInt(anchorF.x),
+                Mathf.RoundToInt(anchorF.y),
+                Mathf.RoundToInt(anchorF.z));
         }
 
         // ─────────────────────────────────────────────────────────────────────────────
@@ -204,10 +259,11 @@ namespace Aerow.View.Build
             else
             {
                 Construct c = target.Construct.Construct;
-                if (!c.CanPlace(currentBlockDef.Id, target.PlaceCell, _currentOrientation)) return; // overlap / footprint / not connected
-                c.PlaceBlock(currentBlockDef.Id, target.PlaceCell, _currentOrientation);
+                GridPos anchor = ComputeAnchor(target, _currentOrientation);
+                if (!c.CanPlace(currentBlockDef.Id, anchor, _currentOrientation)) return; // overlap / footprint / not connected
+                c.PlaceBlock(currentBlockDef.Id, anchor, _currentOrientation);
                 target.Construct.Rebuild(); // remesh + rebuild colliders for the dirty chunk
-                Debug.Log($"[BuildManager] Placed '{currentBlockDef.DisplayName}' at {target.PlaceCell} on construct #{c.Id}."); // TEMP DEBUG
+                Debug.Log($"[BuildManager] Placed '{currentBlockDef.DisplayName}' at {anchor} on construct #{c.Id}."); // TEMP DEBUG
             }
 
             // TODO: playerInventory.RemoveAll(cost);
@@ -258,9 +314,10 @@ namespace Aerow.View.Build
             else
             {
                 Transform t = target.Construct.transform;
-                worldPos = t.TransformPoint(GridSpace.CellToLocal(target.PlaceCell) + q * halfSpan);
+                GridPos anchor = ComputeAnchor(target, orient);
+                worldPos = t.TransformPoint(GridSpace.CellToLocal(anchor) + q * halfSpan);
                 worldRot = t.rotation * q;
-                valid = target.Construct.Construct.CanPlace(currentBlockDef.Id, target.PlaceCell, orient);
+                valid = target.Construct.Construct.CanPlace(currentBlockDef.Id, anchor, orient);
             }
 
             // Authored meshes are already true world size; the cube fallback spans the footprint.
@@ -372,8 +429,10 @@ namespace Aerow.View.Build
                 else
                 {
                     GUILayout.Label($"Target: construct #{_lastTarget.Construct.Construct.Id}");
-                    GUILayout.Label($"Hit cell:   {_lastTarget.HitCell}");
-                    GUILayout.Label($"Place cell: {_lastTarget.PlaceCell}");
+                    GUILayout.Label($"Hit cell: {_lastTarget.HitCell}   face {_lastTarget.FaceDir}");
+                    GUILayout.Label(HasBlockSelected
+                        ? $"Anchor: {ComputeAnchor(_lastTarget, OrientationFor(false))}"
+                        : "Anchor: <no block>");
                 }
                 GUILayout.Label($"Face normal: {_lastTarget.WorldNormal}");
             }
@@ -390,8 +449,13 @@ namespace Aerow.View.Build
         private void ComputeTerrainPose(in BuildTarget target, out Vector3 constructPos, out Quaternion rot)
         {
             rot = TerrainRotation();
-            Vector3 firstCellCentre = GridSpace.CellToLocal(GridPos.Zero); // (½cs, ½cs, ½cs)
-            Vector3 offsetH = rot * new Vector3(firstCellCentre.x, 0f, firstCellCentre.z);
+
+            // Centre the whole block on the cursor (not just its anchor cell) — matters for
+            // multi-cell blocks. Vertically the construct's origin is the block's base.
+            GridPos size = currentBlockDef.Size;
+            Vector3 blockCentre = GridSpace.CellToLocal(GridPos.Zero)
+                                + new Vector3(size.X - 1, size.Y - 1, size.Z - 1) * (0.5f * GridSpace.CellSize);
+            Vector3 offsetH = rot * new Vector3(blockCentre.x, 0f, blockCentre.z);
             constructPos = new Vector3(
                 target.WorldPoint.x - offsetH.x,
                 target.WorldPoint.y,
