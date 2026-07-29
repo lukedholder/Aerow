@@ -100,7 +100,11 @@ namespace Aerow.View.Build
             int index = slot - 1; // slot 1 → block 0, slot 2 → block 1, …
             if (index >= blocks.Count) return;
 
-            currentBlockDef = blocks.Get(new BlockId(index));
+            BlockDef picked = blocks.Get(new BlockId(index));
+            if (picked == currentBlockDef) return; // re-selecting the same block keeps its rotation
+
+            currentBlockDef = picked;
+            _currentOrientation = BlockOrientation.Identity; // a newly-picked block starts unrotated
             Debug.Log($"[BuildManager] Selected block '{currentBlockDef.DisplayName}' (slot {slot})."); // TEMP DEBUG
         }
 
@@ -183,8 +187,8 @@ namespace Aerow.View.Build
             if (target.OnTerrain)
             {
                 // Free placement — no grid or rotation snap (Satisfactory-style). The construct
-                // sits at the hit point, yawed to the player's facing; the first block is centred
-                // on the cursor.
+                // sits at the hit point with the player's chosen absolute yaw; the first block is
+                // centred on the cursor.
                 ComputeTerrainPose(target, out Vector3 pos, out Quaternion rot);
                 Material mat = GameBootstrap.Content.MaterialOf(currentBlockDef.Id);
                 if (mat == null) mat = constructMaterial;
@@ -381,11 +385,11 @@ namespace Aerow.View.Build
             GUILayout.EndArea();
         }
 
-        // Free (un-snapped) pose for a construct seeded on terrain: sit at the hit point, yaw to
-        // the player's facing, and centre the first block horizontally on the cursor.
+        // Free (un-snapped) pose for a construct seeded on terrain: sit at the hit point, take the
+        // absolute scroll-wheel yaw, and centre the first block horizontally on the cursor.
         private void ComputeTerrainPose(in BuildTarget target, out Vector3 constructPos, out Quaternion rot)
         {
-            rot = FacingYaw();
+            rot = TerrainRotation();
             Vector3 firstCellCentre = GridSpace.CellToLocal(GridPos.Zero); // (½cs, ½cs, ½cs)
             Vector3 offsetH = rot * new Vector3(firstCellCentre.x, 0f, firstCellCentre.z);
             constructPos = new Vector3(
@@ -394,16 +398,8 @@ namespace Aerow.View.Build
                 target.WorldPoint.z - offsetH.z);
         }
 
-        // Upright rotation facing the camera's horizontal direction, plus the player's scroll-wheel
-        // yaw offset — free rotation, no snapping. (Drop the camera term for an absolute world yaw.)
-        private Quaternion FacingYaw()
-        {
-            Vector3 fwd = playerCamera.transform.forward;
-            fwd.y = 0f;
-            Quaternion facing = fwd.sqrMagnitude > 0.0001f
-                ? Quaternion.LookRotation(fwd, Vector3.up)
-                : Quaternion.identity;
-            return facing * Quaternion.Euler(0f, _terrainYaw, 0f);
-        }
+        // Absolute world yaw for a construct seeded on terrain — independent of where the player is
+        // looking, so builds stay put while you move and can be lined up with existing structures.
+        private Quaternion TerrainRotation() => Quaternion.Euler(0f, _terrainYaw, 0f);
     }
 }
