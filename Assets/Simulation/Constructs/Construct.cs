@@ -157,7 +157,7 @@ namespace Aerow.Sim
         // ── Internals ──
 
         /// <summary>Cells a block covers: its Size box, rotated by orientation, offset by anchor.</summary>
-        private static IEnumerable<GridPos> Footprint(GridPos size, GridPos anchor, BlockOrientation orientation)
+        public static IEnumerable<GridPos> Footprint(GridPos size, GridPos anchor, BlockOrientation orientation)
         {
             for (int x = 0; x < size.X; x++)
                 for (int y = 0; y < size.Y; y++)

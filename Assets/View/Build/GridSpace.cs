@@ -12,6 +12,14 @@ namespace Aerow.View.Build
     {
         public const float CellSize = 0.25f;
 
+        /// <summary>
+        /// Extra scale applied to authored block meshes. Block meshes are authored at <b>true
+        /// world size</b> (1 unit = 1 m), so a 1×1×1 block is modelled 0.25 m across and needs no
+        /// rescaling — hence 1. Set this to <see cref="CellSize"/> instead if you ever switch to
+        /// authoring in cell units (1 unit = 1 cell).
+        /// </summary>
+        public const float MeshScale = 1f;
+
         /// <summary>Local point → the cell that contains it.</summary>
         public static GridPos LocalToCell(Vector3 local) => new GridPos(
             Mathf.FloorToInt(local.x / CellSize),

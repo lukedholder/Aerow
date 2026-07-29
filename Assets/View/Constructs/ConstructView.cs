@@ -23,9 +23,10 @@ namespace Aerow.View
         private Mesh _mesh;
 
         /// <summary>Bind this view to a sim construct and build its mesh/colliders.</summary>
-        public void Initialize(Construct construct)
+        public void Initialize(Construct construct, Material overrideMaterial = null)
         {
             Construct = construct;
+            if (overrideMaterial != null) material = overrideMaterial;
             Rebuild();
         }
 
@@ -38,6 +39,14 @@ namespace Aerow.View
             if (_renderer == null) _renderer = GetComponent<MeshRenderer>();
             if (material != null) _renderer.sharedMaterial = material;
 
+            // A MeshRenderer added at runtime has no material — geometry would be invisible.
+            if (_renderer.sharedMaterial == null)
+            {
+                _renderer.sharedMaterial = FallbackMaterial();
+                Debug.LogWarning("[ConstructView] No material assigned — using a fallback. Set " +
+                                 "BlockDefSO.material or BuildManager.constructMaterial.", this);
+            }
+
             if (_mesh == null)
             {
                 _mesh = new Mesh { name = "Construct" };
@@ -45,12 +54,32 @@ namespace Aerow.View
                 _mesh.MarkDynamic();
             }
 
-            ConstructMesher.BuildMesh(Construct, _mesh);
+            // Content supplies the block catalogue + authored meshes; null falls back to cubes.
+            GameContent content = GameBootstrap.IsReady ? GameBootstrap.Content : null;
+
+            ConstructMesher.BuildMesh(Construct, content, _mesh);
             _filter.sharedMesh = _mesh;
             ConstructMesher.RebuildColliders(Construct, gameObject);
 
-            Debug.Log($"[ConstructView] Rebuilt construct #{Construct.Id} — " +
-                      $"{Construct.BlockCount} block(s), {_mesh.vertexCount} verts."); // TEMP DEBUG
+            // TEMP DEBUG — everything needed to diagnose an invisible construct in one line.
+            Debug.Log($"[ConstructView] #{Construct.Id}: {Construct.BlockCount} block(s) " +
+                      $"({ConstructMesher.LastAuthoredBlocks} authored / {ConstructMesher.LastProceduralBlocks} cube) → " +
+                      $"{_mesh.vertexCount} verts, {_mesh.triangles.Length / 3} tris, " +
+                      $"bounds {_mesh.bounds.size}, mat '{(_renderer.sharedMaterial != null ? _renderer.sharedMaterial.name : "NULL")}', " +
+                      $"content {(GameBootstrap.IsReady ? "ready" : "NULL")}", this);
+        }
+
+        private static Material _fallback;
+
+        private static Material FallbackMaterial()
+        {
+            if (_fallback != null) return _fallback;
+
+            Shader sh = Shader.Find("Universal Render Pipeline/Lit");
+            if (sh == null) sh = Shader.Find("Standard");
+            if (sh == null) sh = Shader.Find("Unlit/Color");
+            _fallback = new Material(sh) { name = "ConstructFallback" };
+            return _fallback;
         }
 
         private void OnDestroy()

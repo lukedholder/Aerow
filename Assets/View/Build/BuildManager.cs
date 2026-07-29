@@ -30,12 +30,23 @@ namespace Aerow.View.Build
         [Tooltip("Constructs first built on terrain are anchored foundations; undock later to move.")]
         [SerializeField] private bool anchorNewConstructs = true;
 
+        [Tooltip("Material for newly-seeded constructs (used when the block itself has no material).")]
+        [SerializeField] private Material constructMaterial;
+
         // --- Held selection (for now driven by hotbar keys 1..N over GameContent.Blocks). ---
         private BlockDef currentBlockDef;             // the selected block; null = nothing in hand
         private BlockOrientation _currentOrientation; // cycled by rotate input
 
-        // --- Ghost preview instance. ---
+        [Header("Ghost")]
+        [Tooltip("Material for the placement preview — a transparent material reads best.")]
+        [SerializeField] private Material ghostMaterial;
+        [SerializeField] private Color validTint = new Color(0.3f, 1f, 0.3f, 0.5f);
+        [SerializeField] private Color invalidTint = new Color(1f, 0.3f, 0.3f, 0.5f);
+
+        // --- Ghost preview instance (created at runtime). ---
         private GameObject _ghost;
+        private Renderer _ghostRenderer;
+        private Material _ghostMat;
 
         // --- Cached raycast target for the debug overlay. ---
         private bool _hasTarget;
@@ -164,16 +175,20 @@ namespace Aerow.View.Build
 
             if (target.OnTerrain)
             {
-                // Seed a new construct at the hit point. Snap to a world grid so foundations tile,
-                // and pick a yaw (aligned to the surface, or to the player's facing).
-                // TODO:
-                //   Vector3 pos = SnapToWorldGrid(target.WorldPoint);
-                //   Quaternion rot = FoundationRotation(target.WorldNormal, playerCamera.transform);
-                //   ConstructView view = ConstructFactory.Create(pos, rot);
-                //   view.Construct.IsAnchored = anchorNewConstructs;
-                //   view.Construct.PlaceBlock(currentBlockDef.Id, GridPos.Zero, _currentOrientation);
-                //   view.Rebuild();
-                Debug.Log("[BuildManager] TODO: seed a new construct on terrain.");
+                // Free placement — no grid or rotation snap (Satisfactory-style). The construct
+                // sits at the hit point, yawed to the player's facing; the first block is centred
+                // on the cursor.
+                ComputeTerrainPose(target, out Vector3 pos, out Quaternion rot);
+                Material mat = GameBootstrap.Content.MaterialOf(currentBlockDef.Id);
+                if (mat == null) mat = constructMaterial;
+
+                ConstructView view = ConstructFactory.Create(GameBootstrap.Content.Blocks, pos, rot, mat);
+                Construct c = view.Construct;
+                c.IsAnchored = anchorNewConstructs;
+                c.PlaceBlock(currentBlockDef.Id, GridPos.Zero, _currentOrientation);
+                view.Rebuild();
+
+                Debug.Log($"[BuildManager] Seeded construct #{c.Id} at {pos} with '{currentBlockDef.DisplayName}'."); // TEMP DEBUG
             }
             else
             {
@@ -209,16 +224,57 @@ namespace Aerow.View.Build
 
         private void UpdateGhost(in BuildTarget target)
         {
-            // TODO: show a translucent preview of currentBlockDef at the target cell, tinted
-            //       green/red by CanPlace. World pose:
-            //   - construct: target.Construct.transform.TransformPoint(GridSpace.CellToLocal(target.PlaceCell))
-            //   - terrain:   SnapToWorldGrid(target.WorldPoint)
-            //   Reuse a single ghost GameObject (build its mesh from the block's visual).
+            EnsureGhost();
+
+            Vector3 centre;
+            Quaternion rot;
+            bool valid;
+
+            if (target.OnTerrain)
+            {
+                ComputeTerrainPose(target, out Vector3 cpos, out rot);
+                centre = cpos + rot * GridSpace.CellToLocal(GridPos.Zero);
+                valid = true; // a fresh construct always seeds
+            }
+            else
+            {
+                Transform t = target.Construct.transform;
+                rot = t.rotation;
+                centre = t.TransformPoint(GridSpace.CellToLocal(target.PlaceCell));
+                valid = target.Construct.Construct.CanPlace(currentBlockDef.Id, target.PlaceCell, _currentOrientation);
+            }
+
+            _ghost.transform.SetPositionAndRotation(centre, rot);
+            _ghost.transform.localScale = Vector3.one * GridSpace.CellSize;
+            if (_ghostMat != null) _ghostMat.color = valid ? validTint : invalidTint;
+            if (!_ghost.activeSelf) _ghost.SetActive(true);
+        }
+
+        private void EnsureGhost()
+        {
+            if (_ghost != null) return;
+
+            _ghost = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            _ghost.name = "BlockGhost";
+            Destroy(_ghost.GetComponent<Collider>()); // preview must not block the build raycast
+
+            _ghostRenderer = _ghost.GetComponent<Renderer>();
+            _ghostMat = ghostMaterial != null
+                ? new Material(ghostMaterial)
+                : new Material(_ghostRenderer.sharedMaterial);
+            _ghostRenderer.sharedMaterial = _ghostMat;
+            _ghost.SetActive(false);
         }
 
         private void HideGhost()
         {
             if (_ghost != null && _ghost.activeSelf) _ghost.SetActive(false);
+        }
+
+        private void OnDestroy()
+        {
+            if (_ghost != null) Destroy(_ghost);
+            if (_ghostMat != null) Destroy(_ghostMat);
         }
 
         private void CycleOrientationFromInput()
@@ -264,8 +320,25 @@ namespace Aerow.View.Build
             GUILayout.EndArea();
         }
 
-        // TODO helpers to implement with the construct system:
-        //   Vector3 SnapToWorldGrid(Vector3 p)         — round to the world foundation grid.
-        //   Quaternion FoundationRotation(normal, cam) — align a new construct to the surface/facing.
+        // Free (un-snapped) pose for a construct seeded on terrain: sit at the hit point, yaw to
+        // the player's facing, and centre the first block horizontally on the cursor.
+        private void ComputeTerrainPose(in BuildTarget target, out Vector3 constructPos, out Quaternion rot)
+        {
+            rot = FacingYaw();
+            Vector3 firstCellCentre = GridSpace.CellToLocal(GridPos.Zero); // (½cs, ½cs, ½cs)
+            Vector3 offsetH = rot * new Vector3(firstCellCentre.x, 0f, firstCellCentre.z);
+            constructPos = new Vector3(
+                target.WorldPoint.x - offsetH.x,
+                target.WorldPoint.y,
+                target.WorldPoint.z - offsetH.z);
+        }
+
+        // Upright rotation facing the camera's horizontal direction — free yaw, no snapping.
+        private Quaternion FacingYaw()
+        {
+            Vector3 fwd = playerCamera.transform.forward;
+            fwd.y = 0f;
+            return fwd.sqrMagnitude > 0.0001f ? Quaternion.LookRotation(fwd, Vector3.up) : Quaternion.identity;
+        }
     }
 }
