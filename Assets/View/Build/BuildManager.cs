@@ -58,6 +58,7 @@ namespace Aerow.View.Build
         // --- Cached raycast target for the debug overlay. ---
         private bool _hasTarget;
         private BuildTarget _lastTarget;
+        private bool _warnedNoHotbar;
 
         private bool HasBlockSelected => currentBlockDef != null;
 
@@ -91,16 +92,25 @@ namespace Aerow.View.Build
 
         private void UpdateSelection()
         {
-            if (!GameBootstrap.IsReady) return;
-            BlockCatalogue blocks = GameBootstrap.Content.Blocks;
-
             int slot = GameInput.OnFoot.HotbarDigitPressed(); // 1..9, 0 = none this frame
             if (slot < 1) return;
 
-            int index = slot - 1; // slot 1 → block 0, slot 2 → block 1, …
-            if (index >= blocks.Count) return;
+            if (!Hotbar.Exists)
+            {
+                if (!_warnedNoHotbar)
+                {
+                    Debug.LogWarning("[BuildManager] No Hotbar in the scene — nothing to select.", this);
+                    _warnedNoHotbar = true;
+                }
+                return;
+            }
 
-            BlockDef picked = blocks.Get(new BlockId(index));
+            BlockDef picked = Hotbar.Instance.Select(slot - 1); // key 1 → slot index 0
+            if (picked == null)
+            {
+                Debug.Log($"[BuildManager] Hotbar slot {slot} is empty."); // TEMP DEBUG
+                return;
+            }
             if (picked == currentBlockDef) return; // re-selecting the same block keeps its rotation
 
             currentBlockDef = picked;
@@ -251,7 +261,7 @@ namespace Aerow.View.Build
                 Material mat = GameBootstrap.Content.MaterialOf(currentBlockDef.Id);
                 if (mat == null) mat = constructMaterial;
 
-                ConstructView view = ConstructFactory.Create(GameBootstrap.Content.Blocks, pos, rot, mat);
+                ConstructView view = ConstructFactory.Create(GameBootstrap.Sim, pos, rot, mat);
                 Construct c = view.Construct;
                 c.IsAnchored = anchorNewConstructs;
                 c.PlaceBlock(currentBlockDef.Id, GridPos.Zero, OrientationFor(true));
@@ -411,7 +421,7 @@ namespace Aerow.View.Build
             GUILayout.Label("BuildManager (debug)");
             GUILayout.Label(HasBlockSelected
                 ? $"Block: {currentBlockDef.DisplayName}  (id {currentBlockDef.Id.Index})"
-                : "Block: <none>   press 1 / 2 to select");
+                : "Block: <none>   press 1-9 (hotbar)");
 
             bool terrain = _hasTarget && _lastTarget.OnTerrain;
             GUILayout.Label(terrain

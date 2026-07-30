@@ -151,12 +151,14 @@ namespace Aerow.View.Input
                 return 0;
             }
 
-            // Hotbar slot pressed this frame (1..9), or 0 for none. TEMP: reads the number-row keys
-            // directly instead of through the .inputactions asset — swap to real Hotbar actions later.
+            // Hotbar slot pressed this frame: 1..9 for those keys, 10 for the '0' key (the 10th slot,
+            // Minecraft-style), or 0 for none. TEMP: reads the number-row keys directly instead of
+            // through the .inputactions asset — swap to real Hotbar actions later.
             public static int HotbarDigitPressed()
             {
                 Keyboard kb = Keyboard.current;
                 if (kb == null) return 0;
+                if (kb.digit0Key.wasPressedThisFrame) return 10;
                 if (kb.digit1Key.wasPressedThisFrame) return 1;
                 if (kb.digit2Key.wasPressedThisFrame) return 2;
                 if (kb.digit3Key.wasPressedThisFrame) return 3;

@@ -723,6 +723,7 @@ GameObject:
   - component: {fileID: 573388101}
   - component: {fileID: 573388100}
   - component: {fileID: 573388102}
+  - component: {fileID: 573388103}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -895,6 +896,29 @@ MonoBehaviour:
   ghostMaterial: {fileID: 2100000, guid: 93caccb41c0743f449a85ccce57bc311, type: 2}
   validTint: {r: 0.3, g: 1, b: 0.3, a: 0.5}
   invalidTint: {r: 1, g: 0.3, b: 0.3, a: 0.5}
+--- !u!114 &573388103
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 573388095}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ef0cadc4e08ab2742bd00aa27472e614, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: View::Aerow.View.Hotbar
+  slotAssets:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
 --- !u!1 &737154746
 GameObject:
   m_ObjectHideFlags: 0

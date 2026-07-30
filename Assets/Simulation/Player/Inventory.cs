@@ -10,7 +10,7 @@ namespace Aerow.Sim
     /// </summary>
     public sealed class Inventory
     {
-        private readonly ItemStack[] _slots;
+        private ItemStack[] _slots; // not readonly — Grow() resizes it
         private readonly ItemCatalogue _items;
 
         public int SlotCount => _slots.Length;
@@ -118,6 +118,25 @@ namespace Aerow.Sim
                 if (room >= count) return true;
             }
             return room >= count;
+        }
+
+        /// <summary>
+        /// Add capacity, keeping existing contents in place. Used for inventory upgrades unlocked
+        /// through the game. Growth only — shrinking would have to decide the fate of the items in
+        /// the removed slots, so it's deliberately unsupported. Returns the new slot count.
+        /// </summary>
+        public int Grow(int additionalSlots)
+        {
+            if (additionalSlots <= 0) return _slots.Length;
+
+            int old = _slots.Length;
+            Array.Resize(ref _slots, old + additionalSlots);
+
+            // Array.Resize zero-fills, and default(ItemStack) has Item = ItemId(0) — a *valid* id.
+            // Write real Empty values so new slots don't look like they hold item 0.
+            for (int i = old; i < _slots.Length; i++) _slots[i] = ItemStack.Empty;
+
+            return _slots.Length;
         }
 
         public void Clear()
